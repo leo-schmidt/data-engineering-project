@@ -4,3 +4,6 @@
 .python-version
 *.csv
 *.parquet
+keys/
+.terraform*
+terraform.*
