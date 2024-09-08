@@ -20,6 +20,8 @@ run_launcher:
       volumes: # Make docker client accessible to any launched containers as well
         - /var/run/docker.sock:/var/run/docker.sock
         - /tmp/io_manager_storage:/tmp/io_manager_storage
+        # - ./project:/opt/dagster/app/project
+      auto_remove: true
 
 run_storage:
   module: dagster_postgres.run_storage
