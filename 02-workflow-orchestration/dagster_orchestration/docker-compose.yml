@@ -31,6 +31,8 @@ services:
       DAGSTER_POSTGRES_DB: "postgres"
       DAGSTER_POSTGRES_PORT: 5432
       DAGSTER_CURRENT_IMAGE: "user_code_image"
+    volumes:
+      - ./project:/opt/dagster/app/project
     networks:
       - docker_network
 
@@ -63,7 +65,7 @@ services:
       - docker_network
     depends_on:
       - db
-      - user_code
+      # - user_code
 
   daemon:
     build:
@@ -86,7 +88,7 @@ services:
       - docker_network
     depends_on:
       - db
-      - user_code
+      # - user_code
 
 networks:
   docker_network:
