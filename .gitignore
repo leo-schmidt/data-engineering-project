@@ -5,6 +5,8 @@
 *.csv
 *.parquet
 keys/
+__pycache__
+*.egg-info
 
 # terraform
 **/.terraform/*
