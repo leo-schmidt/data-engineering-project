@@ -12,6 +12,7 @@ RUN pip install -r /opt/app/requirements.txt
 WORKDIR /opt/dagster/app
 
 COPY ./project /opt/dagster/app/project
+COPY gcp_creds.json /opt/dagster/app/gcp_creds.json
 
 # Run dagster gRPC server on port 4000
 

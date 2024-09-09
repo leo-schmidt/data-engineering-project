@@ -1,8 +1,6 @@
 # image from:
 # https://github.com/dagster-io/dagster/blob/1.8.4/examples/deploy_docker/docker-compose.yml
 
-version: "3.7"
-
 services:
   db:
     image: postgres:13
@@ -12,9 +10,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: "user"
-      POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "postgres"
+      POSTGRES_USER: ${DAGSTER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DAGSTER_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${DAGSTER_POSTGRES_DB}
     networks:
       - docker_network
 
@@ -26,14 +24,17 @@ services:
     image: user_code_image
     restart: always
     environment:
-      DAGSTER_POSTGRES_USER: "user"
-      DAGSTER_POSTGRES_PASSWORD: "password"
-      DAGSTER_POSTGRES_HOST: "db"
-      DAGSTER_POSTGRES_DB: "postgres"
-      DAGSTER_POSTGRES_PORT: 5432
+      DAGSTER_POSTGRES_USER: ${DAGSTER_POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${DAGSTER_POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_HOST: ${DAGSTER_POSTGRES_HOST}
+      DAGSTER_POSTGRES_DB: ${DAGSTER_POSTGRES_DB}
+      DAGSTER_POSTGRES_PORT: ${DAGSTER_POSTGRES_PORT}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
+      GCP_BUCKET_NAME: ${GCP_BUCKET_NAME}
       DAGSTER_CURRENT_IMAGE: "user_code_image"
     volumes:
       - ./project:/opt/dagster/app/project
+      - ./gcp_creds.json:/tmp/gcp_creds.json:ro
     networks:
       - docker_network
     command: ["dagster", "code-server", "start", "--package-name", "project", "--host", "0.0.0.0", "--port", "4000"]
@@ -56,11 +57,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DAGSTER_POSTGRES_USER: "user"
-      DAGSTER_POSTGRES_PASSWORD: "password"
-      DAGSTER_POSTGRES_HOST: "db"
-      DAGSTER_POSTGRES_DB: "postgres"
-      DAGSTER_POSTGRES_PORT: 5432
+      DAGSTER_POSTGRES_USER: ${DAGSTER_POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${DAGSTER_POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_HOST: ${DAGSTER_POSTGRES_HOST}
+      DAGSTER_POSTGRES_DB: ${DAGSTER_POSTGRES_DB}
+      DAGSTER_POSTGRES_PORT: ${DAGSTER_POSTGRES_PORT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
@@ -80,11 +81,11 @@ services:
     container_name: daemon
     restart: on-failure
     environment:
-      DAGSTER_POSTGRES_USER: "user"
-      DAGSTER_POSTGRES_PASSWORD: "password"
-      DAGSTER_POSTGRES_HOST: "db"
-      DAGSTER_POSTGRES_DB: "postgres"
-      DAGSTER_POSTGRES_PORT: 5432
+      DAGSTER_POSTGRES_USER: ${DAGSTER_POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${DAGSTER_POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_HOST: ${DAGSTER_POSTGRES_HOST}
+      DAGSTER_POSTGRES_DB: ${DAGSTER_POSTGRES_DB}
+      DAGSTER_POSTGRES_PORT: ${DAGSTER_POSTGRES_PORT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage

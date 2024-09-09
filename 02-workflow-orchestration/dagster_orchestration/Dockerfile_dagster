@@ -8,7 +8,7 @@ WORKDIR /opt/app
 RUN pip install -r /opt/app/requirements.txt
 
 # Set $DAGSTER_HOME and copy dagster instance and workspace YAML there
-ENV DAGSTER_HOME=/opt/dagster/
+ENV DAGSTER_HOME=/opt/dagster/dagster_home
 
 RUN mkdir -p $DAGSTER_HOME
 
