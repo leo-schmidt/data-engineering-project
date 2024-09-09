@@ -7,6 +7,7 @@
 keys/
 __pycache__
 *.egg-info
+*.json
 
 # terraform
 **/.terraform/*

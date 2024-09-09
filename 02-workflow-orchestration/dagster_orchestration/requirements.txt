@@ -1,4 +1,6 @@
 dagster
+dagster-gcp
+dagster-gcp-pandas
 dagster-graphql
 dagster-webserver
 dagster-postgres

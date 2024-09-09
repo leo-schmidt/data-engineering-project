@@ -40,4 +40,17 @@ def api_to_postgres_batch(context: AssetExecutionContext) -> None:
         df = batch.to_pandas()
         df.to_sql("ApiToPostgresBatch", engine, if_exists="append", index=False)
 
-    context.log.info("Last batch: {batch}")
+    context.log.info(f"Last batch: {batch}")
+
+
+@asset(
+    name="ApiToGCS",
+    io_manager_key="gcs_io_manager",
+    description="Download dataset from source and upload to GCS bucket",
+)
+def api_to_gcs(context) -> pd.DataFrame:
+    path = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet"
+
+    df = pd.read_parquet(path)
+
+    return df

@@ -1,4 +1,6 @@
+import os
 from dagster import Definitions, load_assets_from_modules
+from dagster_gcp import GCSPickleIOManager, GCSResource
 
 from . import assets
 from .io_manager import pandas_postgres_io_manager
@@ -14,10 +16,14 @@ defs = Definitions(
             {
                 "username": {"env": "DAGSTER_POSTGRES_USER"},
                 "password": {"env": "DAGSTER_POSTGRES_PASSWORD"},
-                "hostname": "db",
+                "hostname": {"env": "DAGSTER_POSTGRES_HOST"},
                 "db_name": {"env": "DAGSTER_POSTGRES_DB"},
                 "port": {"env": "DAGSTER_POSTGRES_PORT"},
             }
+        ),
+        "gcs_io_manager": GCSPickleIOManager(
+            gcs_bucket=os.getenv("GCP_BUCKET_NAME"),
+            gcs=GCSResource(project=os.getenv("GCP_PROJECT_NAME")),
         ),
         "postgres_resource": postgres_resource,
     },
