@@ -17,7 +17,13 @@ class PandasPostgresIOManager(IOManager):
 
     def handle_output(self, context: OutputContext, obj: pd.DataFrame):
         table_name = context.asset_key.path[-1]
-        obj.to_sql(table_name, self.engine, if_exists="replace", index=False)
+        obj.to_sql(
+            table_name,
+            self.engine,
+            if_exists="replace",
+            index=False,
+            chunksize=100000,
+        )
         context.log.info(f"DataFrame written to table {table_name} in PostgreSQL.")
 
     def load_input(self, context: InputContext) -> pd.DataFrame:
@@ -43,6 +49,8 @@ def pandas_postgres_io_manager(init_context: InitResourceContext):
     port = init_context.resource_config["port"]
     db_name = init_context.resource_config["db_name"]
 
-    return PandasPostgresIOManager(
-        connection_string=f"postgresql://{username}:{password}@{hostname}:{port}/{db_name}"
+    connection_string = (
+        f"postgresql://{username}:{password}@{hostname}:{port}/{db_name}"
     )
+
+    return PandasPostgresIOManager(connection_string)
