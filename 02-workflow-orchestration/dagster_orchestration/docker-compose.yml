@@ -28,6 +28,7 @@ services:
     environment:
       DAGSTER_POSTGRES_USER: "user"
       DAGSTER_POSTGRES_PASSWORD: "password"
+      DAGSTER_POSTGRES_HOST: "db"
       DAGSTER_POSTGRES_DB: "postgres"
       DAGSTER_POSTGRES_PORT: 5432
       DAGSTER_CURRENT_IMAGE: "user_code_image"
@@ -57,6 +58,7 @@ services:
     environment:
       DAGSTER_POSTGRES_USER: "user"
       DAGSTER_POSTGRES_PASSWORD: "password"
+      DAGSTER_POSTGRES_HOST: "db"
       DAGSTER_POSTGRES_DB: "postgres"
       DAGSTER_POSTGRES_PORT: 5432
     volumes:
@@ -80,6 +82,7 @@ services:
     environment:
       DAGSTER_POSTGRES_USER: "user"
       DAGSTER_POSTGRES_PASSWORD: "password"
+      DAGSTER_POSTGRES_HOST: "db"
       DAGSTER_POSTGRES_DB: "postgres"
       DAGSTER_POSTGRES_PORT: 5432
     volumes:
