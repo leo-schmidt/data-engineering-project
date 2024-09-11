@@ -1,4 +1,4 @@
-from dagster import AssetExecutionContext, asset
+from dagster import AssetExecutionContext, AssetIn, asset
 import pandas as pd
 import pyarrow.parquet as pq
 import requests
@@ -48,9 +48,21 @@ def api_to_postgres_batch(context: AssetExecutionContext) -> None:
     io_manager_key="gcs_io_manager",
     description="Download dataset from source and upload to GCS bucket",
 )
-def api_to_gcs(context) -> pd.DataFrame:
+def api_to_gcs() -> pd.DataFrame:
     path = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet"
 
     df = pd.read_parquet(path)
 
     return df
+
+
+@asset(
+    name="GcsToBigQuery",
+    io_manager_key="bigquery_io_manager",
+    description="Download dataset from GCS and upload to BigQuery",
+    ins={"parquet_file": AssetIn("ApiToGCS", input_manager_key="gcs_io_manager")},
+)
+def gcs_to_bigquery(context: AssetExecutionContext, parquet_file) -> pd.DataFrame:
+    # load parquet using gcs_io_manager
+    # and return it to be stored using bigquery_io_manager
+    return parquet_file
