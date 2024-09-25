@@ -4,6 +4,8 @@
 .python-version
 *.csv
 *.parquet
+*.crc
+_SUCCESS
 keys/
 __pycache__
 *.egg-info
