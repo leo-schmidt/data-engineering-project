@@ -1,4 +1,9 @@
-from dagster import AssetExecutionContext, AssetIn, asset
+from dagster import (
+    AssetExecutionContext,
+    AssetIn,
+    MonthlyPartitionsDefinition,
+    asset,
+)
 import pandas as pd
 import pyarrow.parquet as pq
 import requests
@@ -44,12 +49,14 @@ def api_to_postgres_batch(context: AssetExecutionContext) -> None:
 
 
 @asset(
-    name="ApiToGCS",
+    name="YellowTaxiApiToGCS",
     io_manager_key="gcs_io_manager",
     description="Download dataset from source and upload to GCS bucket",
+    partitions_def=MonthlyPartitionsDefinition("2021-01-01", "2023-01-01"),
 )
-def api_to_gcs() -> pd.DataFrame:
-    path = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet"
+def yellow_taxi_api_to_gcs(context: AssetExecutionContext) -> pd.DataFrame:
+    month_key = context.partition_key[:-3]
+    path = f"https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{month_key}.parquet"
 
     df = pd.read_parquet(path)
 
@@ -57,12 +64,56 @@ def api_to_gcs() -> pd.DataFrame:
 
 
 @asset(
-    name="GcsToBigQuery",
+    name="GreenTaxiApiToGCS",
+    io_manager_key="gcs_io_manager",
+    description="Download dataset from source and upload to GCS bucket",
+    partitions_def=MonthlyPartitionsDefinition("2021-01-01", "2023-01-01"),
+)
+def green_taxi_api_to_gcs(context: AssetExecutionContext) -> pd.DataFrame:
+    month_key = context.partition_key[:-3]
+    path = f"https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_{month_key}.parquet"
+
+    df = pd.read_parquet(path)
+
+    return df
+
+
+@asset(
+    name="YellowTaxiGcsToBigQuery",
     io_manager_key="bigquery_io_manager",
     description="Download dataset from GCS and upload to BigQuery",
-    ins={"parquet_file": AssetIn("ApiToGCS", input_manager_key="gcs_io_manager")},
+    ins={
+        "parquet_file": AssetIn(
+            "YellowTaxiApiToGCS", input_manager_key="gcs_io_manager"
+        )
+    },
+    partitions_def=MonthlyPartitionsDefinition("2021-01-01", "2023-01-01"),
+    metadata={"partition_expr": "LPEP_PICKUP_DATETIME"},
 )
-def gcs_to_bigquery(context: AssetExecutionContext, parquet_file) -> pd.DataFrame:
+def yellow_taxi_gcs_to_bigquery(
+    context,
+    parquet_file: pd.DataFrame,
+) -> pd.DataFrame:
     # load parquet using gcs_io_manager
     # and return it to be stored using bigquery_io_manager
+    return parquet_file
+
+
+@asset(
+    name="GreenTaxiGcsToBigQuery",
+    io_manager_key="bigquery_io_manager",
+    description="Download dataset from GCS and upload to BigQuery",
+    ins={
+        "parquet_file": AssetIn(
+            "GreenTaxiApiToGCS",
+            input_manager_key="gcs_io_manager",
+        )
+    },
+    partitions_def=MonthlyPartitionsDefinition("2021-01-01", "2023-01-01"),
+    metadata={"partition_expr": "LPEP_PICKUP_DATETIME"},
+)
+def green_taxi_gcs_to_bigquery(
+    context,
+    parquet_file: pd.DataFrame,
+) -> pd.DataFrame:
     return parquet_file

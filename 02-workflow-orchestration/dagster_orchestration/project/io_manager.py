@@ -1,3 +1,4 @@
+import warnings
 from dagster import (
     IOManager,
     InitResourceContext,
@@ -5,9 +6,12 @@ from dagster import (
     io_manager,
     OutputContext,
     InputContext,
+    ExperimentalWarning,
 )
 from sqlalchemy import create_engine
 import pandas as pd
+
+warnings.filterwarnings("ignore", category=ExperimentalWarning)
 
 
 class PandasPostgresIOManager(IOManager):

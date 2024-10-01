@@ -25,10 +25,11 @@ defs = Definitions(
         "gcs_io_manager": GCSPickleIOManager(
             gcs_bucket=os.getenv("GCP_BUCKET_NAME"),
             gcs=GCSResource(project=os.getenv("GCP_PROJECT_NAME")),
+            gcs_prefix=os.getenv("GCP_BUCKET_PREFIX"),
         ),
         "bigquery_io_manager": BigQueryPandasIOManager(
             project=os.getenv("GCP_PROJECT_NAME"),
-            dataset="yellow_taxi",
+            dataset="taxi",
         ),
         "postgres_resource": postgres_resource,
     },
