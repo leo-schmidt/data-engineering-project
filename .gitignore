@@ -12,6 +12,7 @@ __pycache__
 *.json
 tmp*
 .ipynb_checkpoints
+*.jar
 
 # terraform
 **/.terraform/*
